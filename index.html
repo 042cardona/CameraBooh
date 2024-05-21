@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Test</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        video {
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay></video>
+
+    <script>
+        async function startWebcam() {
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: "user" // Esto intenta usar la cámara frontal
+                    }
+                };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoElement = document.getElementById('video');
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso a tu navegador para acceder.');
+            }
+        }
+
+        window.addEventListener('load', startWebcam);
+    </script>
+</body>
+</html>
