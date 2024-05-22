@@ -3,34 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Test</title>
+    <title>GRABANDO VIDEO</title>
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            position: relative;
         }
         video {
             width: 80%;
             max-width: 600px;
-            border: 2px solid #000;
+            border: 2px solid #ff0000;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .warning {
+            color: #ff0000;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .emojis {
+            font-size: 32px;
+            position: absolute;
+            bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="warning">GUARDANDO VIDEO</div>
     <video id="video" autoplay></video>
+    <div class="emojis">😂🤣😆</div>
 
     <script>
         async function startWebcam() {
             try {
                 const constraints = {
                     video: {
-                        facingMode: "user" // Esto intenta usar la cámara frontal
+                        facingMode: "user" // Intenta usar la cámara frontal
                     }
                 };
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -38,7 +61,7 @@
                 videoElement.srcObject = stream;
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso a tu navegador para acceder.');
+                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso necesario para entrar a la web.');
             }
         }
 
