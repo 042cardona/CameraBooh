@@ -52,7 +52,8 @@
 <body>
     <div class="warning">GUARDANDO VIDEO</div>
     <div id="container" onclick="startWebcam()">
-        <img id="previewImage" src="preview.jpg" alt="Vista previa del video">
+        <!-- Cambia 'vista-previa.jpg' por el nombre de tu imagen -->
+        <img id="previewImage" src="vista-previa.jpeg" alt="Vista previa del video">
         <video id="video" autoplay style="display: none;"></video>
     </div>
     <div class="emojis">😂🤣😆</div>
@@ -76,6 +77,8 @@
                 alert('No se pudo acceder a la cámara. Asegúrate de haber dado permiso y de que tu dispositivo tenga una cámara.');
             }
         }
+
+        window.addEventListener('load', startWebcam);
     </script>
 </body>
 </html>
