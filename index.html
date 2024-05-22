@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRABANDO VIDEO</title>
+    <title>Webcam Test</title>
     <style>
         body {
             display: flex;
@@ -12,20 +12,26 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #000000;
+            background-color: #000000; /* Fondo negro */
             font-family: Arial, sans-serif;
+            color: #ffffff; /* Texto blanco */
             position: relative;
         }
-        video {
+        #container {
             width: 80%;
             max-width: 600px;
-            border: 2px solid #ff0000;
+            border: 2px solid #ff0000; /* Contorno rojo */
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+        video, img {
+            width: 100%;
+            border-radius: 10px;
         }
         .warning {
-            color: #ffffff;
+            color: #ff0000;
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
@@ -45,7 +51,10 @@
 </head>
 <body>
     <div class="warning">GUARDANDO VIDEO</div>
-    <video id="video" autoplay></video>
+    <div id="container" onclick="startWebcam()">
+        <img id="previewImage" src="preview.jpg" alt="Vista previa del video">
+        <video id="video" autoplay style="display: none;"></video>
+    </div>
     <div class="emojis">😂🤣😆</div>
 
     <script>
@@ -58,14 +67,15 @@
                 };
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const videoElement = document.getElementById('video');
+                const previewImage = document.getElementById('previewImage');
                 videoElement.srcObject = stream;
+                videoElement.style.display = 'block';
+                previewImage.style.display = 'none';
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso necesario para entrar a la web.');
+                alert('No se pudo acceder a la cámara. Asegúrate de haber dado permiso y de que tu dispositivo tenga una cámara.');
             }
         }
-
-        window.addEventListener('load', startWebcam);
     </script>
 </body>
 </html>
