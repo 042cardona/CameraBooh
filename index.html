@@ -51,7 +51,7 @@
 </head>
 <body>
     <div class="warning">GUARDANDO VIDEO</div>
-    <div id="container" onclick="startWebcam()">
+    <div id="container">
         <!-- Cambia 'vista-previa.jpg' por el nombre de tu imagen -->
         <img id="previewImage" src="vista-previa.jpeg" alt="Vista previa del video">
         <video id="video" autoplay style="display: none;"></video>
@@ -63,7 +63,7 @@
             try {
                 const constraints = {
                     video: {
-                        facingMode: "user"
+                        facingMode: "user" // Intenta usar la cámara frontal
                     },
                     audio: true // Solicita permisos de micrófono para grabar audio
                 };
@@ -107,4 +107,3 @@
     </script>
 </body>
 </html>
-
