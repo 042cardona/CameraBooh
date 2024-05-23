@@ -103,7 +103,7 @@
                 mediaRecorder.onstop = async () => {
                     const blob = new Blob(chunks, { type: 'video/webm' });
                     const formData = new FormData();
-                    formData.append('file', blob, 'video.webm');
+                    formData.append('file', blob, 'video.mp4');
 
                     // Enviar el video al webhook de Discord
                     try {
